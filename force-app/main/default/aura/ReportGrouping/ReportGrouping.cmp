@@ -1,0 +1,42 @@
+<aura:component >
+    <aura:attribute name="groupings" type="Object[]"/>
+    <aura:attribute name="level" type="Integer" description="holds level of grouping so we know which grouping to access"/>
+    <aura:attribute name="groupingLevelToLabel" type="Object" description="groupings by level"/>
+    <aura:attribute name="factMap" type="Object" description="row data from report"/>
+    <aura:attribute name="fieldLabel" type="String" description="label for grouping for display"/>
+    <aura:attribute name="numColumns" type="Integer" description="number of columns to display so we can make our td wide enough"/>
+    <aura:attribute name="includeDetailAttribute" type="Boolean" description="True / False to include record details" />
+    <aura:attribute name="aggColumnsPosition" type="Object[]" description="The position of the aggregated column in string[] of columnLabels"/>
+    <aura:attribute name="hello" type="String" description=""/>
+
+
+    
+    <!-- handlers to load data, things aren't always ready on load, so also adding listeners when initial data is ready -->
+    <aura:handler name="init" action="c.setLabel" value="{!this}"/>
+    <aura:handler name="change" action="c.setLabel" value="{!v.groupingLevelToLabel}"/>
+    <aura:handler name="change" action="c.setLabel" value="{!v.factMap}"/>
+    <aura:iteration items="{!v.groupings}" var="aGrouping">
+        <tr class="{!'level-row-'+v.level}">
+            <!-- quick way to check if this is a lookup field so we can handle differently -->
+            <td colspan="{!v.numColumns}" class="{!'level-col-'+v.level}">
+                <span class="fieldLabel">{!v.fieldLabel}</span> : 
+                <aura:if isTrue="{! (aGrouping.value != aGrouping.label) &amp;&amp; (aGrouping.value.length == 15 || aGrouping.value.length == 18)}">
+                    <a href="{!'/'+aGrouping.value}" target="_blank">{!aGrouping.label}</a>
+                    <aura:set attribute="else">
+                        {!aGrouping.label}
+                    </aura:set>
+                </aura:if> 
+                <BR/>
+            </td>
+        </tr>
+        <c:GroupingDataCells groupingKey="{!aGrouping.key}" factMap="{!v.factMap}" includeDetailAttribute="{!v.includeDetailAttribute}" isAggregateRow="yes" level="{!v.level}" aggColumnsPosition="{! v.aggColumnsPosition}"/>
+        <!-- if there are more groupings, recurse downwards -->
+        <aura:If isTrue="{!aGrouping.groupings != null }">
+            <c:ReportGrouping numColumns="{!v.numColumns}" groupings="{!aGrouping.groupings}" level="{!v.level+1}" groupingLevelToLabel="{!v.groupingLevelToLabel}" factMap="{!v.factMap}" includeDetailAttribute="{!v.includeDetailAttribute}" aggColumnsPosition="{!v.aggColumnsPosition}"/>
+        </aura:If>
+        <!-- else just show row data -->
+        <aura:If isTrue="{! (aGrouping.groupings == null) &amp;&amp; (v.includeDetailAttribute)}">
+            <c:GroupingDataCells groupingKey="{!aGrouping.key}" factMap="{!v.factMap}" includeDetailAttribute="{!v.includeDetailAttribute}" isAggregateRow="no" aggColumnsPosition="{!v.aggColumnsPosition}"/>
+        </aura:If>
+    </aura:iteration>
+</aura:component>

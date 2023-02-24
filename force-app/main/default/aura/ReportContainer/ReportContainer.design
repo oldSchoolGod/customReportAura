@@ -1,0 +1,5 @@
+<design:component >
+	<design:attribute name="reportIdAttribute" label="Report ID" description="Use the ID of the report that you want to display. Make sure the user has access to it"/>
+	<design:attribute name="includeDetailAttribute" label="Include Detail" description="TRUE: include detail.  Emply value or FALSE: no detail"/>
+	<design:attribute name="heightAttribute" label="Height" description="Height of component"/>
+</design:component>

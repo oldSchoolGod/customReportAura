@@ -1,0 +1,72 @@
+<aura:component >
+    <aura:handler name="init" value="{!this}" action="c.doInit"/>
+    <aura:handler name="change" action="c.doInit" value="{!v.factMap}"/>
+    <aura:handler name="change" action="c.doInit" value="{!v.aggColumnsPosition}"/>
+    <aura:handler name="change" action="c.doInit" value="{!v.includeDetailAttribute}"/>
+     <aura:handler name="change" action="c.doInit" value="{!v.columnLabels}"/>
+
+    <aura:attribute name="groupingKey" type="String" description="key so we know which data to access from factMap"/>
+    <aura:attribute name="factMap" type="Object" description="all data keyed to groupings so we can pull the correct data"/>
+    <aura:attribute name="dataRows" type="Object[]" description="rows of data from report"/>
+    <aura:attribute name="level" type="Integer" description="holds level of grouping so we know which grouping to access"/>
+    <aura:attribute name="includeDetailAttribute" type="Boolean" description="True / False to include record details"/>
+    <aura:attribute name="isAggregateRow" type="String" description="yes / no to show aggregattion row"/>
+    <aura:attribute name="aggLabelValue" type="Object[]" description=""/>
+    <aura:attribute name="aggColumnsPosition" type="Object[]" description="The position of the aggregated column in string[] of columnLabels"/>
+     <aura:attribute name="columnLabels" type="String[]" description="Labels of columns, order is assumed"/>
+    
+
+    <!-- gives us access to edit modal -->
+    <aura:dependency resource="markup://force:editRecord" type="EVENT" />
+        <aura:if isTrue="{! (v.includeDetailAttribute)}">
+            <aura:if isTrue="{! v.isAggregateRow == 'no'}">
+                <aura:iteration items="{!v.dataRows}" var="aRow">
+                    <tr style= "text-align: center">
+                        <aura:iteration items="{!aRow.dataCells}" var="aCell">
+                            <td style="text-align: center;">
+                                <!-- quick way to check if this is a lookup field so we can handle differently with view and edit access-->
+                                <aura:if isTrue="{! (aCell.value != aCell.label) &amp;&amp; (aCell.value.length == 15 || aCell.value.length == 18)}">
+                                    <a href="{!'/'+aCell.value}" target="_blank">{!aCell.label}</a>&nbsp;
+                                   <!-- <a href="javascript:void(0);" onclick="{!c.editRecord}" data-recordid="{!aCell.value}">
+                                        <lightning:icon iconName="utility:edit" size="x-small" class="slids-icon-text-error" alternativeText="Edit"/>
+                                    </a> -->
+                                    <aura:set attribute="else">
+                                        <div class="{!aCell.cssClasstemp}" >{!aCell.label}</div> 
+                                    </aura:set>
+                                </aura:if> 
+                            </td>
+                        </aura:iteration>
+                    </tr>
+                </aura:iteration>
+            <aura:set attribute="else">
+                <tr class="{!'level-row-'+v.level}">
+                    <aura:iteration items="{!v.aggLabelValue}" var="aColumn" indexVar="aCount">
+                        <td style="text-align: center;vertical-align: top;">
+                            <aura:iteration items="{! aColumn}" var="aggArrayItem" indexVar="aCount1">
+                                {! aggArrayItem}  <BR/>
+                            </aura:iteration>
+                        </td>
+                    </aura:iteration>
+                </tr>
+            </aura:set>
+            </aura:if>
+        <aura:set attribute="else">
+            <tr class="{!'level-row-'+v.level}">
+                <aura:iteration items="{!v.dataRows}" var="aCell">
+                    <td style="text-align: center;">
+                        <!-- quick way to check if this is a lookup field so we can handle differently with view and edit access-->
+                        <aura:if isTrue="{! (aCell.value != aCell.label) &amp;&amp; (aCell.value.length == 15 || aCell.value.length == 18)}">
+                            <a href="{!'/'+aCell.value}" target="_blank">{!aCell.label}</a>&nbsp;
+                            <a href="javascript:void(0);" onclick="{!c.editRecord}" data-recordid="{!aCell.value}">
+                                <lightning:icon iconName="utility:edit" size="x-small" class="slids-icon-text-error" alternativeText="Edit"/>
+                            </a>
+                            <aura:set attribute="else">
+                                <div class="{!aCell.cssClasstemp}">{!aCell.label}</div> 
+                            </aura:set>
+                        </aura:if> 
+                    </td>
+                </aura:iteration>
+            </tr>
+        </aura:set>
+        </aura:if>
+</aura:component>

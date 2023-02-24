@@ -1,0 +1,23 @@
+.THIS .Bluecolor{
+   background-color : #8080ff;
+    font-weight: bold;
+}
+.THIS .yellowcolor{
+   background-color : #ffff80;
+    font-weight: bold;
+}
+.THIS .orangecolor{
+   background-color : #ff8533;
+    font-weight: bold;
+}
+.THIS .pinckcolor{
+   background-color : #ff8080;
+    font-weight: bold;
+}
+.THIS .greenwcolor{
+   background-color : lightgreen;
+    font-weight: bold;
+}
+.THIS .defaultcolor{
+   background-color : white;
+}
